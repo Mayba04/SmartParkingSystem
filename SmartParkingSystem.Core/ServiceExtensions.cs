@@ -2,6 +2,8 @@
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using SmartParkingSystem.Core.AutoMappers;
+using SmartParkingSystem.Core.Interfaces;
+using SmartParkingSystem.Core.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,8 @@ namespace SmartParkingSystem.Core
     {
         public static void AddCoreServices(this IServiceCollection services)
         {
-          
+            services.AddScoped<IParkingSpotService, ParkingSpotService>();
+            services.AddScoped<IParkingLotService, ParkingLotService>();
         }
 
         public static void AddValidator(this IServiceCollection service)

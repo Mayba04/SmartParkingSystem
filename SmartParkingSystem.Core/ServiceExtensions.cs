@@ -19,6 +19,8 @@ namespace SmartParkingSystem.Core
             services.AddScoped<IParkingSpotService, ParkingSpotService>();
             services.AddScoped<IParkingLotService, ParkingLotService>();
             services.AddScoped<IReservationService, ReservationService>();
+            services.AddScoped<ISensorService, SensorService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         public static void AddValidator(this IServiceCollection service)

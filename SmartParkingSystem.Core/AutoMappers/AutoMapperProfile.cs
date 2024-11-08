@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using SmartParkingSystem.Core.DTOs.ParkingLot;
 using SmartParkingSystem.Core.DTOs.ParkingSpot;
+using SmartParkingSystem.Core.DTOs.Reservation;
 using SmartParkingSystem.Core.Entities;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,10 @@ namespace SmartParkingSystem.Core.AutoMappers
             CreateMap<ParkingLotCreateDTO, ParkingLot>().ReverseMap();
             CreateMap<ParkingLotUpdateDTO, ParkingLot>().ReverseMap();
             CreateMap<ParkingLotDTO, ParkingLot>().ReverseMap();
+
+            CreateMap<ReservationCreateDTO, Reservation>().ReverseMap();
+            CreateMap<ReservationUpdateDTO, Reservation>().ReverseMap();
+            CreateMap<ReservationDTO, Reservation>().ReverseMap();
         }
     }
 }

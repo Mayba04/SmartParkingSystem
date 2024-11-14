@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartParkingSystem.Core.DTOs.User;
 using SmartParkingSystem.Core.Interfaces;
+using SmartParkingSystem.Core.Responses;
+using SmartParkingSystem.Core.Validation.User;
 
 namespace SmartParkingSystem.Controllers
 {
@@ -14,6 +17,19 @@ namespace SmartParkingSystem.Controllers
         public UserController(IUserService appUserService)
         {
             _appUserService = appUserService;
+        }
+
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginUser([FromBody] UserLoginDTO model)
+        {
+            var validationResult = await new LoginUserValidation().ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+                ServiceResponse response = await _appUserService.LoginUserAsync(model);
+                return Ok(response);
+            }
+            return BadRequest(validationResult.Errors.FirstOrDefault());
         }
 
         [HttpGet("getall")]

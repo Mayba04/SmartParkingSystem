@@ -4,6 +4,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace SmartParkingSystem.Infrastructure.Migrations
 {
     /// <inheritdoc />
@@ -189,6 +191,31 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RefreshTokens",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UserId = table.Column<string>(type: "text", nullable: false),
+                    Token = table.Column<string>(type: "text", nullable: false),
+                    JwtId = table.Column<string>(type: "text", nullable: false),
+                    IsUsed = table.Column<bool>(type: "boolean", nullable: false),
+                    IsRevoked = table.Column<bool>(type: "boolean", nullable: false),
+                    AddedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ExpireDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    AppUserId = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RefreshTokens_AspNetUsers_AppUserId",
+                        column: x => x.AppUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ParkingSpots",
                 columns: table => new
                 {
@@ -245,6 +272,33 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "AspNetRoles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "90a6b88e-71b5-4f07-84fb-e585e23692e2", null, "User", "USER" },
+                    { "98d538ae-f527-40c2-9d31-19f312aa2a9b", null, "Administrator", "ADMINISTRATOR" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "FullName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "3cfa99fb-12a8-4e5d-a727-67b0cc9fad32", 0, "1af99fcd-8e23-41b0-9223-eaa19df12e18", "AppUser", "admin@email.com", true, "John Connor Johnovych", false, null, "ADMIN@EMAIL.COM", "ADMIN@EMAIL.COM", "AQAAAAIAAYagAAAAECpWVkSSqMtXt/+6psBe6xtke1pHTrz7tK0I9NeFgoUf2uYdps/g35aoMmAJRh2Pag==", "", false, "5f8e171f-6fa0-4211-87fe-e87765ed04ca", false, "admin@email.com" },
+                    { "4144d732-c3d5-45c3-b727-f83bef0bea13", 0, "ffc70146-ecbe-4e72-9df7-ddd6c6991e9a", "AppUser", "seller@email.com", true, "John Doe Johnovych", false, null, "SELLER@EMAIL.COM", "SELLER@EMAIL.COM", "AQAAAAIAAYagAAAAEKwmEPdeXXBb0/X4r6DqZdNB1IiCz6orx377lxQ/wzh0FLZpAtqf3ul4zoCT0iOWFg==", "", false, "15334f9f-466f-445d-a44b-1007978b0df4", false, "seller@email.com" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserRoles",
+                columns: new[] { "RoleId", "UserId" },
+                values: new object[,]
+                {
+                    { "98d538ae-f527-40c2-9d31-19f312aa2a9b", "3cfa99fb-12a8-4e5d-a727-67b0cc9fad32" },
+                    { "90a6b88e-71b5-4f07-84fb-e585e23692e2", "4144d732-c3d5-45c3-b727-f83bef0bea13" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -293,6 +347,11 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                 column: "SensorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_RefreshTokens_AppUserId",
+                table: "RefreshTokens",
+                column: "AppUserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reservations_ParkingSpotId",
                 table: "Reservations",
                 column: "ParkingSpotId");
@@ -320,6 +379,9 @@ namespace SmartParkingSystem.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "Reservations");

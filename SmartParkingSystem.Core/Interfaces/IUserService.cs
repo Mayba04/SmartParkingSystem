@@ -15,6 +15,8 @@ namespace SmartParkingSystem.Core.Interfaces
         Task<ServiceResponse<object, object>> DeleteAsync(string id);
         Task<ServiceResponse<UserDTO, object>> GetByIdAsync(string id);
         Task<ServiceResponse<IEnumerable<UserDTO>, object>> GetAllAsync();
+
+        Task<ServiceResponse> LoginUserAsync(UserLoginDTO model);
     }
 
 }

@@ -20,6 +20,7 @@ namespace SmartParkingSystem.Core
             services.AddScoped<IParkingLotService, ParkingLotService>();
             services.AddScoped<IReservationService, ReservationService>();
             services.AddScoped<ISensorService, SensorService>();
+            services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IUserService, UserService>();
         }
 

@@ -12,7 +12,7 @@ using SmartParkingSystem.Infrastructure.Context;
 namespace SmartParkingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20241104184545_Init")]
+    [Migration("20241114151854_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -49,6 +49,20 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "98d538ae-f527-40c2-9d31-19f312aa2a9b",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        },
+                        new
+                        {
+                            Id = "90a6b88e-71b5-4f07-84fb-e585e23692e2",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -209,6 +223,18 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "3cfa99fb-12a8-4e5d-a727-67b0cc9fad32",
+                            RoleId = "98d538ae-f527-40c2-9d31-19f312aa2a9b"
+                        },
+                        new
+                        {
+                            UserId = "4144d732-c3d5-45c3-b727-f83bef0bea13",
+                            RoleId = "90a6b88e-71b5-4f07-84fb-e585e23692e2"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -287,6 +313,48 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.ToTable("ParkingSpots");
                 });
 
+            modelBuilder.Entity("SmartParkingSystem.Core.Entities.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsRevoked")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("JwtId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("RefreshTokens");
+                });
+
             modelBuilder.Entity("SmartParkingSystem.Core.Entities.Reservation", b =>
                 {
                     b.Property<int>("Id")
@@ -348,6 +416,44 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                         .HasColumnType("character varying(128)");
 
                     b.HasDiscriminator().HasValue("AppUser");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "3cfa99fb-12a8-4e5d-a727-67b0cc9fad32",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "1af99fcd-8e23-41b0-9223-eaa19df12e18",
+                            Email = "admin@email.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@EMAIL.COM",
+                            NormalizedUserName = "ADMIN@EMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAECpWVkSSqMtXt/+6psBe6xtke1pHTrz7tK0I9NeFgoUf2uYdps/g35aoMmAJRh2Pag==",
+                            PhoneNumber = "",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "5f8e171f-6fa0-4211-87fe-e87765ed04ca",
+                            TwoFactorEnabled = false,
+                            UserName = "admin@email.com",
+                            FullName = "John Connor Johnovych"
+                        },
+                        new
+                        {
+                            Id = "4144d732-c3d5-45c3-b727-f83bef0bea13",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "ffc70146-ecbe-4e72-9df7-ddd6c6991e9a",
+                            Email = "seller@email.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "SELLER@EMAIL.COM",
+                            NormalizedUserName = "SELLER@EMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKwmEPdeXXBb0/X4r6DqZdNB1IiCz6orx377lxQ/wzh0FLZpAtqf3ul4zoCT0iOWFg==",
+                            PhoneNumber = "",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "15334f9f-466f-445d-a44b-1007978b0df4",
+                            TwoFactorEnabled = false,
+                            UserName = "seller@email.com",
+                            FullName = "John Doe Johnovych"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -418,6 +524,15 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.Navigation("ParkingLot");
 
                     b.Navigation("Sensor");
+                });
+
+            modelBuilder.Entity("SmartParkingSystem.Core.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("SmartParkingSystem.Core.Entities.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId");
+
+                    b.Navigation("AppUser");
                 });
 
             modelBuilder.Entity("SmartParkingSystem.Core.Entities.Reservation", b =>

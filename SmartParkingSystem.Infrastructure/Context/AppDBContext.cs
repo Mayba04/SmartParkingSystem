@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SmartParkingSystem.Core.Entities;
+using SmartParkingSystem.Infrastructure.Initializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,9 @@ namespace SmartParkingSystem.Infrastructure.Context
     {
         public AppDBContext() : base() { }
         public AppDBContext(DbContextOptions<AppDBContext> options) : base(options) { }
+
+        public DbSet<AppUser> AppUsers { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public DbSet<ParkingLot> ParkingLots { get; set; }
         public DbSet<ParkingSpot> ParkingSpots { get; set; }
@@ -50,6 +54,11 @@ namespace SmartParkingSystem.Infrastructure.Context
                 .WithMany()
                 .HasForeignKey(r => r.ParkingSpotId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+
+            modelBuilder.SeedRoles();
+            modelBuilder.SeedAdministrator();
+            modelBuilder.SeedUser();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using SmartParkingSystem.Core.DTOs.Token;
 using SmartParkingSystem.Core.DTOs.User;
 using SmartParkingSystem.Core.Entities;
 using SmartParkingSystem.Core.Interfaces;
@@ -18,11 +19,40 @@ namespace SmartParkingSystem.Core.Services
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IMapper _mapper;
+        private readonly IJwtService _jwtService;
+        private readonly SignInManager<AppUser> _signInManager;
 
-        public UserService(UserManager<AppUser> userManager, IMapper mapper)
+        public UserService(UserManager<AppUser> userManager, IMapper mapper, SignInManager<AppUser> signInManager, IJwtService jwtService)
         {
             _userManager = userManager;
             _mapper = mapper;
+            _signInManager = signInManager;
+            _jwtService = jwtService;
+        }
+
+        public async Task<ServiceResponse> LoginUserAsync(UserLoginDTO model)
+        {
+            AppUser? user = await _userManager.FindByEmailAsync(model.Email);
+            if (user == null)
+            {
+                return new ServiceResponse(false, "User or password incorect.");
+            }
+            SignInResult result = await _signInManager.PasswordSignInAsync(user, model.Password,false, lockoutOnFailure: true);
+            if (result.IsNotAllowed)
+            {
+                return new ServiceResponse(false, "Confirm your email please");
+            }
+            if (result.IsLockedOut)
+            {
+                return new ServiceResponse(false, "User is locked. Connect with your site admistrator.");
+            }
+            if (result.Succeeded)
+            {
+                Tokens? tokens = await _jwtService.GenerateJwtTokensAsync(user);
+                await _signInManager.SignInAsync(user, false);
+                return new ServiceResponse(true, "User successfully loged in.", payload: true, accessToken: tokens.Token, refreshToken: tokens.refreshToken.Token);
+            }
+            return new ServiceResponse(false, "User or password incorect");
         }
 
         public async Task<ServiceResponse<UserDTO, object>> AddAsync(UserCreateDTO model)

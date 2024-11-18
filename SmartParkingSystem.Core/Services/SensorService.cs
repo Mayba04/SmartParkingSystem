@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
+using MailKit.Search;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 using SmartParkingSystem.Core.DTOs.Sensor;
 using SmartParkingSystem.Core.Entities;
 using SmartParkingSystem.Core.Interfaces;
 using SmartParkingSystem.Core.Responses;
+using SmartParkingSystem.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +25,12 @@ namespace SmartParkingSystem.Core.Services
             _sensorRepo = sensorRepo;
             _mapper = mapper;
         }
+
+        public async Task<Sensor> GetLastInsertedSensorAsync()
+        {
+            return await _sensorRepo.GetItemBySpec(new SensorSpecification.LastInsertedSensorSpecification());
+        }
+
 
         public async Task<ServiceResponse<SensorDTO, object>> AddAsync(SensorCreateDTO model)
         {

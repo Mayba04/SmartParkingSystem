@@ -1,4 +1,5 @@
 ﻿using SmartParkingSystem.Core.DTOs.Sensor;
+using SmartParkingSystem.Core.Entities;
 using SmartParkingSystem.Core.Responses;
 using System;
 using System.Collections.Generic;
@@ -15,5 +16,6 @@ namespace SmartParkingSystem.Core.Interfaces
         Task<ServiceResponse<object, object>> DeleteAsync(int id);
         Task<ServiceResponse<SensorDTO, object>> GetByIdAsync(int id);
         Task<ServiceResponse<IEnumerable<SensorDTO>, object>> GetAllAsync();
+        Task<Sensor> GetLastInsertedSensorAsync();
     }
 }

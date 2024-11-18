@@ -3,6 +3,7 @@ using SmartParkingSystem.Core.DTOs.ParkingLot;
 using SmartParkingSystem.Core.Entities;
 using SmartParkingSystem.Core.Interfaces;
 using SmartParkingSystem.Core.Responses;
+using SmartParkingSystem.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,5 +66,31 @@ namespace SmartParkingSystem.Core.Services
             var parkingLots = await _parkingLotRepo.GetAll();
             return new ServiceResponse<IEnumerable<ParkingLotDTO>, object>(true, "", payload: _mapper.Map<IEnumerable<ParkingLotDTO>>(parkingLots));
         }
+
+        public async Task<PaginationResponse<List<ParkingLotDTO>, object>> GetPagedAsync(string? searchTerm = null, int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                var parkingLots = await _parkingLotRepo.GetListBySpec(new ParkingLotSpecification.GetByNameAndLocationWithPagination(searchTerm, page, pageSize));
+
+                var totalParkingLots = string.IsNullOrEmpty(searchTerm)
+                    ? await _parkingLotRepo.GetCountRows()
+                    : await _parkingLotRepo.GetCountBySpec(new ParkingLotSpecification.GetByNameOrLocation(searchTerm));
+
+                return new PaginationResponse<List<ParkingLotDTO>, object>(
+                    true,
+                    "Parking lots retrieved successfully.",
+                    payload: _mapper.Map<List<ParkingLotDTO>>(parkingLots),
+                    pageNumber: page,
+                    pageSize: pageSize,
+                    totalCount: totalParkingLots
+                );
+            }
+            catch (Exception ex)
+            {
+                return new PaginationResponse<List<ParkingLotDTO>, object>(false, "Failed: " + ex.Message);
+            }
+        }
+
     }
 }

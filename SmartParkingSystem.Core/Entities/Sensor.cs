@@ -12,7 +12,7 @@ namespace SmartParkingSystem.Core.Entities
         public int Id { get; set; }
         public string Type { get; set; }
         public string Status { get; set; }
-
+        public double LastActiveDistance { get; set; }
         public ICollection<ParkingSpot> ParkingSpots { get; set; }
     }
 }

@@ -55,10 +55,18 @@ namespace SmartParkingSystem.Infrastructure.Context
                 .HasForeignKey(r => r.ParkingSpotId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            modelBuilder.Entity<ParkingSpot>()
+                .Property(p => p.SensorId)
+                .IsRequired(false);
+
 
             modelBuilder.SeedRoles();
             modelBuilder.SeedAdministrator();
             modelBuilder.SeedUser();
+            modelBuilder.SeedParkingLots();
+            modelBuilder.SeedParkingSpots();
+            modelBuilder.SeedReservations();
+            modelBuilder.SeedSensors();
         }
     }
 }

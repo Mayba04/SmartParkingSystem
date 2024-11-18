@@ -12,12 +12,12 @@ namespace SmartParkingSystem.Core.Entities
         public int Id { get; set; }
         public string Location { get; set; }
         public bool IsOccupied { get; set; }
-        public int SensorId { get; set; }
+        public int? SensorId { get; set; }
         public DateTime LastUpdated { get; set; }
 
         public int ParkingLotId { get; set; }
         public ParkingLot ParkingLot { get; set; }
-        public Sensor Sensor { get; set; }
+        public Sensor? Sensor { get; set; }
     }
 
 }

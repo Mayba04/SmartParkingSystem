@@ -10,5 +10,6 @@ namespace SmartParkingSystem.Core.DTOs.Sensor
     {
         public string Type { get; set; }
         public string Status { get; set; }
+        public double LastActiveDistance { get; set; }
     }
 }

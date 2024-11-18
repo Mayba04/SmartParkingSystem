@@ -71,6 +71,18 @@ namespace SmartParkingSystem.Controllers
             }
             return BadRequest(response);
         }
+
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPagedParkingLots([FromQuery] string? searchTerm = null, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+            var response = await _parkingLotService.GetPagedAsync(searchTerm, page, pageSize);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
     }
 }
 

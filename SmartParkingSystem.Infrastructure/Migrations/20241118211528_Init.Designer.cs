@@ -12,7 +12,7 @@ using SmartParkingSystem.Infrastructure.Context;
 namespace SmartParkingSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20241114151854_Init")]
+    [Migration("20241118211528_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -53,13 +53,13 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "98d538ae-f527-40c2-9d31-19f312aa2a9b",
+                            Id = "553ef8e7-c14d-4864-b654-2bc6c74be2ae",
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
-                            Id = "90a6b88e-71b5-4f07-84fb-e585e23692e2",
+                            Id = "822e5976-20e4-462f-a2c2-a84cb3d10c2b",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -227,13 +227,13 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "3cfa99fb-12a8-4e5d-a727-67b0cc9fad32",
-                            RoleId = "98d538ae-f527-40c2-9d31-19f312aa2a9b"
+                            UserId = "03cc3c56-df4e-4cf4-9cb6-5e684a53745e",
+                            RoleId = "553ef8e7-c14d-4864-b654-2bc6c74be2ae"
                         },
                         new
                         {
-                            UserId = "4144d732-c3d5-45c3-b727-f83bef0bea13",
-                            RoleId = "90a6b88e-71b5-4f07-84fb-e585e23692e2"
+                            UserId = "05e488bc-d1a3-4b50-b82e-7207dc22986a",
+                            RoleId = "822e5976-20e4-462f-a2c2-a84cb3d10c2b"
                         });
                 });
 
@@ -264,9 +264,15 @@ namespace SmartParkingSystem.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<double>("Latitude")
+                        .HasColumnType("double precision");
+
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -278,6 +284,35 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ParkingLots");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Latitude = 0.0,
+                            Location = "123 Main St",
+                            Longitude = 0.0,
+                            Name = "Main Street Parking",
+                            TotalCapacity = 100
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Latitude = 0.0,
+                            Location = "456 Center Ave",
+                            Longitude = 0.0,
+                            Name = "Downtown Garage",
+                            TotalCapacity = 200
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Latitude = 0.0,
+                            Location = "789 Park Blvd",
+                            Longitude = 0.0,
+                            Name = "City Square Lot",
+                            TotalCapacity = 150
+                        });
                 });
 
             modelBuilder.Entity("SmartParkingSystem.Core.Entities.ParkingSpot", b =>
@@ -301,7 +336,7 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.Property<int>("ParkingLotId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("SensorId")
+                    b.Property<int?>("SensorId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -311,6 +346,35 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.HasIndex("SensorId");
 
                     b.ToTable("ParkingSpots");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsOccupied = false,
+                            LastUpdated = new DateTime(2024, 11, 18, 21, 15, 27, 919, DateTimeKind.Utc).AddTicks(6933),
+                            Location = "Level 1 - Spot 1",
+                            ParkingLotId = 1,
+                            SensorId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsOccupied = true,
+                            LastUpdated = new DateTime(2024, 11, 18, 21, 15, 27, 919, DateTimeKind.Utc).AddTicks(6937),
+                            Location = "Level 1 - Spot 2",
+                            ParkingLotId = 1,
+                            SensorId = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsOccupied = false,
+                            LastUpdated = new DateTime(2024, 11, 18, 21, 15, 27, 919, DateTimeKind.Utc).AddTicks(6939),
+                            Location = "Level 2 - Spot 1",
+                            ParkingLotId = 2,
+                            SensorId = 3
+                        });
                 });
 
             modelBuilder.Entity("SmartParkingSystem.Core.Entities.RefreshToken", b =>
@@ -383,6 +447,24 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Reservations");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            EndTime = new DateTime(2024, 11, 18, 22, 15, 27, 919, DateTimeKind.Utc).AddTicks(6976),
+                            ParkingSpotId = 1,
+                            StartTime = new DateTime(2024, 11, 18, 20, 15, 27, 919, DateTimeKind.Utc).AddTicks(6970),
+                            UserId = "05e488bc-d1a3-4b50-b82e-7207dc22986a"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            EndTime = new DateTime(2024, 11, 18, 23, 15, 27, 919, DateTimeKind.Utc).AddTicks(6978),
+                            ParkingSpotId = 3,
+                            StartTime = new DateTime(2024, 11, 18, 19, 15, 27, 919, DateTimeKind.Utc).AddTicks(6977),
+                            UserId = "05e488bc-d1a3-4b50-b82e-7207dc22986a"
+                        });
                 });
 
             modelBuilder.Entity("SmartParkingSystem.Core.Entities.Sensor", b =>
@@ -392,6 +474,9 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("LastActiveDistance")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -404,6 +489,29 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Sensors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            LastActiveDistance = 0.0,
+                            Status = "Active",
+                            Type = "Ultrasonic"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            LastActiveDistance = 0.0,
+                            Status = "Inactive",
+                            Type = "Camera"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            LastActiveDistance = 0.0,
+                            Status = "Active",
+                            Type = "Pressure"
+                        });
                 });
 
             modelBuilder.Entity("SmartParkingSystem.Core.Entities.AppUser", b =>
@@ -420,38 +528,38 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "3cfa99fb-12a8-4e5d-a727-67b0cc9fad32",
+                            Id = "03cc3c56-df4e-4cf4-9cb6-5e684a53745e",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1af99fcd-8e23-41b0-9223-eaa19df12e18",
+                            ConcurrencyStamp = "6e732904-1e66-43b7-ba66-dfd0d1bde4c9",
                             Email = "admin@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EMAIL.COM",
                             NormalizedUserName = "ADMIN@EMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAECpWVkSSqMtXt/+6psBe6xtke1pHTrz7tK0I9NeFgoUf2uYdps/g35aoMmAJRh2Pag==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEK65Vr09+4f7gmrB5gRRvmvBU6G4fMJ7+LbUYztsBEPQncuJXOK6tzNj8KKxZx0OMA==",
                             PhoneNumber = "",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5f8e171f-6fa0-4211-87fe-e87765ed04ca",
+                            SecurityStamp = "c52c5630-0e30-45b1-b308-99f5163a60bd",
                             TwoFactorEnabled = false,
                             UserName = "admin@email.com",
                             FullName = "John Connor Johnovych"
                         },
                         new
                         {
-                            Id = "4144d732-c3d5-45c3-b727-f83bef0bea13",
+                            Id = "05e488bc-d1a3-4b50-b82e-7207dc22986a",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ffc70146-ecbe-4e72-9df7-ddd6c6991e9a",
-                            Email = "seller@email.com",
+                            ConcurrencyStamp = "02a01354-ef3b-4537-a7ad-cc7f9b91a409",
+                            Email = "user@email.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedEmail = "SELLER@EMAIL.COM",
-                            NormalizedUserName = "SELLER@EMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKwmEPdeXXBb0/X4r6DqZdNB1IiCz6orx377lxQ/wzh0FLZpAtqf3ul4zoCT0iOWFg==",
+                            NormalizedEmail = "USER@EMAIL.COM",
+                            NormalizedUserName = "USER@EMAIL.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEMW5Uz1khmYAJeMknBDHtuXMWvCpit4Z3tUNLTlf2YmMSVH4xrgyt4hzEK2hQvZ1w==",
                             PhoneNumber = "",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "15334f9f-466f-445d-a44b-1007978b0df4",
+                            SecurityStamp = "b1a8a6be-a41e-48f8-9c8e-fa369e36fced",
                             TwoFactorEnabled = false,
-                            UserName = "seller@email.com",
+                            UserName = "user@email.com",
                             FullName = "John Doe Johnovych"
                         });
                 });
@@ -518,8 +626,7 @@ namespace SmartParkingSystem.Infrastructure.Migrations
                     b.HasOne("SmartParkingSystem.Core.Entities.Sensor", "Sensor")
                         .WithMany("ParkingSpots")
                         .HasForeignKey("SensorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("ParkingLot");
 

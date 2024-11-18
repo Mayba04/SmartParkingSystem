@@ -15,5 +15,6 @@ namespace SmartParkingSystem.Core.Interfaces
         Task<ServiceResponse<object, object>> DeleteAsync(int id);
         Task<ServiceResponse<ParkingLotDTO, object>> GetByIdAsync(int id);
         Task<ServiceResponse<IEnumerable<ParkingLotDTO>, object>> GetAllAsync();
+        Task<PaginationResponse<List<ParkingLotDTO>, object>> GetPagedAsync(string? searchTerm = null, int page = 1, int pageSize = 10);
     }
 }

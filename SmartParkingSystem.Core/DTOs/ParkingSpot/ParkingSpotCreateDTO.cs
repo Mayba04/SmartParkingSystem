@@ -10,7 +10,7 @@ namespace SmartParkingSystem.Core.DTOs.ParkingSpot
     {
         public string Location { get; set; }
         public bool IsOccupied { get; set; }
-        public int SensorId { get; set; }
+        public int? SensorId { get; set; }
         public int ParkingLotId { get; set; }
     }
 }

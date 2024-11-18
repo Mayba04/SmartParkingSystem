@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using SmartParkingSystem.Core.DTOs.ParkingSpot;
+using SmartParkingSystem.Core.DTOs.Sensor;
 using SmartParkingSystem.Core.Entities;
 using SmartParkingSystem.Core.Interfaces;
 using SmartParkingSystem.Core.Responses;
+using SmartParkingSystem.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,19 +17,49 @@ namespace SmartParkingSystem.Core.Services
     {
         private readonly IRepository<ParkingSpot> _parkingSpotRepo;
         private readonly IMapper _mapper;
+        private readonly ISensorService _sensorService;
 
-        public ParkingSpotService(IRepository<ParkingSpot> parkingSpotRepo, IMapper mapper)
+
+        public ParkingSpotService(IRepository<ParkingSpot> parkingSpotRepo, IMapper mapper, ISensorService sensorService)
         {
             _parkingSpotRepo = parkingSpotRepo;
             _mapper = mapper;
+            _sensorService = sensorService;
         }
 
         public async Task<ServiceResponse<ParkingSpotDTO, object>> AddAsync(ParkingSpotCreateDTO parkingSpotCreateDTO)
         {
+            var sensorCreateDTO = new SensorCreateDTO
+            {
+                Status = "None",
+                Type = "Default",
+                LastActiveDistance = 0.0 
+            };
+
+            var sensorResponse = await _sensorService.AddAsync(sensorCreateDTO);
+
+            if (!sensorResponse.Success)
+            {
+                return new ServiceResponse<ParkingSpotDTO, object>(false, "Failed to create sensor", errors: sensorResponse.Errors);
+            }
+
+            var lastSensor = await _sensorService.GetLastInsertedSensorAsync();
+            if (lastSensor == null)
+            {
+                return new ServiceResponse<ParkingSpotDTO, object>(false, "Failed to get last sensor");
+            }
+
             var parkingSpotEntity = _mapper.Map<ParkingSpotCreateDTO, ParkingSpot>(parkingSpotCreateDTO);
+            parkingSpotEntity.SensorId = lastSensor.Id;
+
             await _parkingSpotRepo.Insert(parkingSpotEntity);
             await _parkingSpotRepo.Save();
-            return new ServiceResponse<ParkingSpotDTO, object>(true, "Parking spot created successfully", payload: _mapper.Map<ParkingSpotDTO>(parkingSpotEntity));
+
+            return new ServiceResponse<ParkingSpotDTO, object>(
+                true,
+                "Parking spot created successfully",
+                payload: _mapper.Map<ParkingSpotDTO>(parkingSpotEntity)
+            );
         }
 
         public async Task<ServiceResponse<ParkingSpotDTO, object>> GetByIdAsync(int id)
@@ -64,6 +96,40 @@ namespace SmartParkingSystem.Core.Services
             await _parkingSpotRepo.Update(parkingSpotEntity);
             await _parkingSpotRepo.Save();
             return new ServiceResponse<ParkingSpotDTO, object>(true, "Parking spot updated successfully", payload: _mapper.Map<ParkingSpotDTO>(parkingSpotEntity));
+        }
+
+        public async Task<PaginationResponse<List<ParkingSpotDTO>, object>> GetPagedParkingSpotsAsync(string? location, int page, int pageSize)
+        {
+            var parkingSpots = await _parkingSpotRepo.GetListBySpec(new ParkingSpotSpecification.GetByLocationAndPagination(location, page, pageSize));
+            var totalSpots = string.IsNullOrEmpty(location)
+                ? await _parkingSpotRepo.GetCountRows()
+                : await _parkingSpotRepo.GetCountBySpec(new ParkingSpotSpecification.GetByLocation(location));
+
+            return new PaginationResponse<List<ParkingSpotDTO>, object>(
+                true,
+                "Parking spots retrieved successfully.",
+                payload: _mapper.Map<List<ParkingSpotDTO>>(parkingSpots),
+                pageNumber: page,
+                pageSize: pageSize,
+                totalCount: totalSpots
+            );
+        }
+
+        public async Task<PaginationResponse<List<ParkingSpotDTO>, object>> GetPagedParkingSpotsByParkingLotAsync(int parkingLotId, string? location, int page, int pageSize)
+        {
+            var parkingSpots = await _parkingSpotRepo.GetListBySpec(new ParkingSpotSpecification.GetByParkingLotAndLocation(parkingLotId, location, page, pageSize));
+            var totalSpots = string.IsNullOrEmpty(location)
+                ? await _parkingSpotRepo.GetCountBySpec(new ParkingSpotSpecification.GetByParkingLot(parkingLotId))
+                : await _parkingSpotRepo.GetCountBySpec(new ParkingSpotSpecification.GetByParkingLotAndLocationWithoutPagination(parkingLotId, location));
+
+            return new PaginationResponse<List<ParkingSpotDTO>, object>(
+                true,
+                "Parking spots retrieved successfully.",
+                payload: _mapper.Map<List<ParkingSpotDTO>>(parkingSpots),
+                pageNumber: page,
+                pageSize: pageSize,
+                totalCount: totalSpots
+            );
         }
     }
 }

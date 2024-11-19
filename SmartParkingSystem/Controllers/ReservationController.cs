@@ -70,5 +70,17 @@ namespace SmartParkingSystem.Controllers
             }
             return BadRequest(response);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPagedReservations([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? globalQuery = null, [FromQuery] DateTime? startDate = null, [FromQuery] DateTime? endDate = null)
+        {
+            var result = await _reservationService.GetPagedReservationsAsync(page, pageSize, globalQuery, startDate, endDate);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
     }
 }

@@ -131,5 +131,13 @@ namespace SmartParkingSystem.Core.Services
                 totalCount: totalSpots
             );
         }
+
+
+        public async Task<ServiceResponse<List<ParkingSpotDTO>, object>> GetAllByParkingLotAsync(int parkingLotId)
+        {
+            var parkingSpots = await _parkingSpotRepo.GetListBySpec(new ParkingSpotSpecification.GetByParkingLot(parkingLotId));
+            return new ServiceResponse<List<ParkingSpotDTO>, object>(true, "Parking spots retrieved successfully.", payload: _mapper.Map<List<ParkingSpotDTO>>(parkingSpots));
+        }
+     
     }
 }

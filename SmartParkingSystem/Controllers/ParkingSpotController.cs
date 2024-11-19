@@ -92,5 +92,17 @@ namespace SmartParkingSystem.Controllers
             }
             return BadRequest(response);
         }
+
+        [HttpGet("parkingLot/{parkingLotId}")]
+        public async Task<IActionResult> GetAllByParkingLot(int parkingLotId)
+        {
+            var response = await _parkingSpotService.GetAllByParkingLotAsync(parkingLotId);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
     }
 }

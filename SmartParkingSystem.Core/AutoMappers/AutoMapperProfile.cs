@@ -33,6 +33,11 @@ namespace SmartParkingSystem.Core.AutoMappers
             CreateMap<SensorUpdateDTO, Sensor>().ReverseMap();
             CreateMap<SensorDTO, Sensor>().ReverseMap();
 
+            CreateMap<Reservation, ReservationExtendedDTO>()
+           .ForMember(dest => dest.UserFullName, opt => opt.MapFrom(src => src.User.FullName))
+           .ForMember(dest => dest.ParkingSpotLocation, opt => opt.MapFrom(src => src.ParkingSpot.Location))
+           .ForMember(dest => dest.ParkingLotName, opt => opt.MapFrom(src => src.ParkingSpot.ParkingLot.Name));
+
             //CreateMap<CreateUserDTO, AppUser>().ReverseMap();
             //CreateMap<DeleteUserDTO, AppUser>().ReverseMap();
             //CreateMap<EditUserDTO, AppUser>().ReverseMap();

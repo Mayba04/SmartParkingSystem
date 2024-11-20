@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartParkingSystem.Core.DTOs.User;
 using SmartParkingSystem.Core.Interfaces;
 using SmartParkingSystem.Core.Responses;
+using SmartParkingSystem.Core.Services;
 using SmartParkingSystem.Core.Validation.User;
 
 namespace SmartParkingSystem.Controllers
@@ -80,6 +81,47 @@ namespace SmartParkingSystem.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var response = await _appUserService.DeleteAsync(id);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response);
+        }
+
+        [HttpGet("paged")]
+        public async Task<IActionResult> GetPagedUserss(
+           [FromQuery] int pageNumber = 1,
+           [FromQuery] int pageSize = 10,
+           [FromQuery] string searchTerm = null)
+        {
+            var response = await _appUserService.GetPagedUsersAsync(pageNumber, pageSize, searchTerm);
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            return BadRequest(response.Message);
+        }
+
+        [HttpPost("changerole")]
+        public async Task<IActionResult> ChangeUserRole([FromBody] ChangeUserRoleDTO model)
+        {
+            var validationResult = await new ChangeUserRoleValidation().ValidateAsync(model);
+            if (validationResult.IsValid)
+            {
+                var response = await _appUserService.ChangeUserRoleAsync(model.UserId, model.NewRole);
+                if (response.Success)
+                {
+                    return Ok(response);
+                }
+                return BadRequest(response);
+            }
+            return BadRequest(validationResult.Errors.FirstOrDefault());
+        }
+
+        [HttpPost("toggleblock")]
+        public async Task<IActionResult> ToggleBlockUser([FromBody] string UserId)
+        {
+            var response = await _appUserService.ToggleBlockUserAsync(UserId);
             if (response.Success)
             {
                 return Ok(response);

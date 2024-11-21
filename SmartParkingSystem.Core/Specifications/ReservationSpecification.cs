@@ -85,6 +85,54 @@ namespace SmartParkingSystem.Core.Specifications
                                             (startTime <= reservation.StartTime && endTime >= reservation.EndTime)));
             }
         }
+
+        public class GetFilteredReservationsByUserId : Specification<Reservation>
+        {
+            public GetFilteredReservationsByUserId(string userId, string? globalQuery, int page, int pageSize)
+            {
+                Query.Where(reservation => reservation.UserId == userId);
+
+                if (!string.IsNullOrEmpty(globalQuery))
+                {
+                    Query.Where(reservation =>
+                        reservation.User.FullName.Contains(globalQuery) ||
+                        reservation.User.Email.Contains(globalQuery) ||
+                        reservation.ParkingSpot.Location.Contains(globalQuery) ||
+                        reservation.ParkingSpot.ParkingLot.Name.Contains(globalQuery) ||
+                        reservation.ParkingSpot.ParkingLot.Location.Contains(globalQuery));
+                }
+
+                Query.Include(reservation => reservation.User)
+                     .Include(reservation => reservation.ParkingSpot)
+                     .ThenInclude(spot => spot.ParkingLot);
+
+                Query.Skip((page - 1) * pageSize).Take(pageSize);
+            }
+        }
+
+        public class GetFilteredReservationsWithoutPaginationByUserId : Specification<Reservation>
+        {
+            public GetFilteredReservationsWithoutPaginationByUserId(string userId, string? globalQuery)
+            {
+                Query.Where(reservation => reservation.UserId == userId);
+
+                if (!string.IsNullOrEmpty(globalQuery))
+                {
+                    Query.Where(reservation =>
+                        reservation.User.FullName.Contains(globalQuery) ||
+                        reservation.User.Email.Contains(globalQuery) ||
+                        reservation.ParkingSpot.Location.Contains(globalQuery) ||
+                        reservation.ParkingSpot.ParkingLot.Name.Contains(globalQuery) ||
+                        reservation.ParkingSpot.ParkingLot.Location.Contains(globalQuery));
+                }
+
+                Query.Include(reservation => reservation.User)
+                     .Include(reservation => reservation.ParkingSpot)
+                     .ThenInclude(spot => spot.ParkingLot);
+            }
+        }
+
+
     }
 
 

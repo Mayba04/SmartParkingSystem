@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SmartParkingSystem.Core.DTOs.Reservation;
 using SmartParkingSystem.Core.Entities;
 using SmartParkingSystem.Core.Interfaces;
@@ -105,6 +106,22 @@ namespace SmartParkingSystem.Core.Services
                 totalCount: totalReservations
             );
         }
+
+        public async Task<PaginationResponse<List<ReservationExtendedDTO>, object>> GetPagedReservationsByUserIdAsync(string userId, int page, int pageSize, string? globalQuery)
+        {
+            var reservations = await _reservationRepo.GetListBySpec(new ReservationSpecification.GetFilteredReservationsByUserId(userId, globalQuery, page, pageSize));
+            var totalReservations = await _reservationRepo.GetCountBySpec(new ReservationSpecification.GetFilteredReservationsWithoutPaginationByUserId(userId, globalQuery));
+
+            return new PaginationResponse<List<ReservationExtendedDTO>, object>(
+                true,
+                "Reservations retrieved successfully.",
+                payload: _mapper.Map<List<ReservationExtendedDTO>>(reservations),
+                pageNumber: page,
+                pageSize: pageSize,
+                totalCount: totalReservations
+            );
+        }
+
 
 
     }

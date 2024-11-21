@@ -81,7 +81,6 @@ namespace SmartParkingSystem.Core.Services
                     new Claim("Id", user.Id),
                     new Claim("Email", user.Email),
                     new Claim("EmailConfirm", user.EmailConfirmed.ToString()),
-                    new Claim("PhoneNumber", user.PhoneNumber ?? ""),
                     new Claim("FullName", user.FullName),
                     new Claim(ClaimsIdentity.DefaultRoleClaimType, roles[0]),
                     new Claim(JwtRegisteredClaimNames.Aud, _configuration["JwtConfig:Audience"]),

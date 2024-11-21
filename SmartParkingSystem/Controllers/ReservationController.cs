@@ -82,5 +82,16 @@ namespace SmartParkingSystem.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetReservationsByUserId(string userId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? query = null)
+        {
+            var result = await _reservationService.GetPagedReservationsByUserIdAsync(userId, page, pageSize, query);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
     }
 }

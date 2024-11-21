@@ -16,5 +16,6 @@ namespace SmartParkingSystem.Core.Interfaces
         Task<ServiceResponse<ReservationDTO, object>> GetByIdAsync(int id);
         Task<ServiceResponse<IEnumerable<ReservationDTO>, object>> GetAllAsync();
         Task<PaginationResponse<List<ReservationExtendedDTO>, object>> GetPagedReservationsAsync(int page, int pageSize, string? globalQuery, DateTime? startDate, DateTime? endDate);
+        Task<PaginationResponse<List<ReservationExtendedDTO>, object>> GetPagedReservationsByUserIdAsync(string userId, int page, int pageSize, string? globalQuery);
     }
 }
